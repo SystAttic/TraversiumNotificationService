@@ -10,12 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import traversium.notification.db.repository.NotificationRepository
-import traversium.notification.kafka.KafkaStreamData
+import traversium.notification.kafka.NotificationStreamData
 import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -39,7 +38,7 @@ class KafkaConsumerTests(
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     fun testKafkaConsumer() {
-        val testData = KafkaStreamData(
+        val testData = NotificationStreamData(
             timestamp = OffsetDateTime.now(),
             senderId = "sender1",
             receiverIds = listOf("receiver1", "receiver2"),

@@ -25,7 +25,7 @@ import kotlin.reflect.KClass
  * @author Maja Razinger
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.kafka", name = ["bootstrap-server"])
+@ConditionalOnProperty(prefix = "spring.kafka", name = ["bootstrap-servers"])
 class KafkaConfiguration(val kafkaProperties: KafkaProperties) {
 
     @Bean
@@ -34,25 +34,25 @@ class KafkaConfiguration(val kafkaProperties: KafkaProperties) {
     @Bean
     fun consumerFactory(
         @Qualifier("kafkaObjectMapper") kafkaObjectMapper: ObjectMapper
-    ): ConsumerFactory<String, KafkaStreamData> {
+    ): ConsumerFactory<String, NotificationStreamData> {
         return DefaultKafkaConsumerFactory(
             kafkaConsumerConfig(
                 kafkaProperties.bootstrapServers,
                 "${kafkaProperties.consumerGroupPrefix?.let { "$it-" } ?: ""}notification-group",
                 kafkaProperties.fetchMaxBytes,
                 kafkaProperties.maxPartitionFetchBytes,
-                KafkaStreamData::class
+                NotificationStreamData::class
             ),
             StringDeserializer(),
-            JsonDeserializer(KafkaStreamData::class.java, kafkaObjectMapper)
+            JsonDeserializer(NotificationStreamData::class.java, kafkaObjectMapper)
         )
     }
 
     @Bean
     fun notificationEventListenerContainer(
         notificationKafkaConsumer: KafkaConsumer,
-        consumerFactory: ConsumerFactory<String, KafkaStreamData>
-    ): KafkaMessageListenerContainer<String, KafkaStreamData> = KafkaMessageListenerContainer(
+        consumerFactory: ConsumerFactory<String, NotificationStreamData>
+    ): KafkaMessageListenerContainer<String, NotificationStreamData> = KafkaMessageListenerContainer(
         consumerFactory,
         kafkaContainerProperties(
             kafkaProperties.topic,

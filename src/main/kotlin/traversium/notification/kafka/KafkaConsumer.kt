@@ -10,13 +10,14 @@ import traversium.notification.service.NotificationService
  */
 class KafkaConsumer(
     private val notificationService: NotificationService,
-): MessageListener<String, KafkaStreamData>, Logging {
+): MessageListener<String, NotificationStreamData>, Logging {
 
-    override fun onMessage(data: ConsumerRecord<String?, KafkaStreamData?>) {
+    override fun onMessage(data: ConsumerRecord<String?, NotificationStreamData?>) {
         val payload = data.value() ?: run {
             logger.warn { "Received null KafkaStreamData payload, skipping processing." }
             return
         }
+
         notificationService.saveNotification(payload)
     }
 }

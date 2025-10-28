@@ -2,21 +2,68 @@ package traversium.notification.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.Sinks
 import traversium.notification.db.model.Notification
 import traversium.notification.db.repository.NotificationRepository
-import traversium.notification.kafka.KafkaStreamData
+import traversium.notification.dto.NotificationDto
+import traversium.notification.kafka.NotificationStreamData
 import traversium.notification.mapper.NotificationMapper.toEntity
+import traversium.notification.mapper.NotificationType
 
 /**
  * @author Maja Razinger
  */
 @Service
 class NotificationService(
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val notificationSink: Sinks.Many<NotificationDto>
 ) {
     @Transactional
-    fun saveNotification(streamData: KafkaStreamData) : Notification {
+    fun saveNotification(streamData: NotificationStreamData) : Notification {
         val entity = streamData.toEntity()
-        return notificationRepository.save(entity)
+        return notificationRepository.save(entity).also {
+            val notificationType = findNotificationType(streamData)
+            val notificationDto = NotificationDto(
+                senderId = it.senderId ?: throw NullPointerException("senderId"),
+                recipientIds = it.receiverIds,
+                collectionReferenceId = it.collectionReferenceId,
+                nodeReferenceId = it.nodeReferenceId,
+                commentReferenceId = it.commentReferenceId,
+                type = notificationType
+            )
+            notificationSink.tryEmitNext(notificationDto)
+        }
     }
+
+    private fun findNotificationType(notificationStreamData: NotificationStreamData): NotificationType {
+        val collectionId = notificationStreamData.collectionReferenceId
+        val nodeId = notificationStreamData.nodeReferenceId
+        val commentId = notificationStreamData.commentReferenceId
+        val action = notificationStreamData.action
+
+        return when {
+            collectionId != null && nodeId != null -> when (action) {
+                "CREATE" -> NotificationType.CREATE_NODE
+                "UPDATE" -> NotificationType.UPDATE_NODE
+                "DELETE" -> NotificationType.DELETE_NODE
+                else -> throw IllegalArgumentException("Unknown action: $action")
+            }
+            nodeId != null && commentId != null -> when (action) {
+                "ADD" -> NotificationType.ADD_COMMENT
+                "REPLY" -> NotificationType.REPLY_COMMENT
+                "REMOVE" -> NotificationType.REMOVE_COMMENT
+                else -> throw IllegalArgumentException("Unknown action: $action")
+            }
+            collectionId != null -> when (action) {
+                "CREATE" -> NotificationType.CREATE_COLLECTION
+                "UPDATE" -> NotificationType.UPDATE_COLLECTION
+                "DELETE" -> NotificationType.DELETE_COLLECTION
+                "ADD_COLLABORATOR" -> NotificationType.ADD_COLLABORATOR
+                "REMOVE_COLLABORATOR" -> NotificationType.REMOVE_COLLABORATOR
+                else -> throw IllegalArgumentException("Unknown action: $action")
+            }
+            else -> throw IllegalArgumentException("Invalid notification data")
+        }
+    }
+
 }

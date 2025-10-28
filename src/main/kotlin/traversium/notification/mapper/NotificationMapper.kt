@@ -1,19 +1,21 @@
 package traversium.notification.mapper
 
 import traversium.notification.db.model.Notification
-import traversium.notification.kafka.KafkaStreamData
+import traversium.notification.kafka.NotificationStreamData
 
 /**
  * @author Maja Razinger
  */
 object NotificationMapper {
 
-    fun KafkaStreamData.toEntity(): Notification {
+    fun NotificationStreamData.toEntity(): Notification {
         return Notification(
             senderId = this.senderId,
             receiverIds = this.receiverIds,
-            content = this.message,
-            referenceId = this.referenceId
+            collectionReferenceId = this.collectionReferenceId,
+            nodeReferenceId = this.nodeReferenceId,
+            commentReferenceId = this.commentReferenceId,
+            timestamp = this.timestamp,
         )
     }
 

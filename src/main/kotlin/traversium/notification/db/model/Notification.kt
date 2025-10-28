@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.OffsetDateTime
 
 /**
  * @author Maja Razinger
@@ -25,11 +26,21 @@ class Notification(
     @Column(name = "receiver_ids", nullable = false)
     val receiverIds: List<String> = emptyList(),
 
-    @Column(name = "content", nullable = false)
-    val content: String? = null,
+    @Column(name = "collection_reference_id", nullable = true)
+    val collectionReferenceId: Long? = null,
 
-    @Column(name = "reference_id")
-    val referenceId: Long? = null
+    @Column(name = "node_reference_id", nullable = true)
+    val nodeReferenceId: Long? = null,
+
+    @Column(name = "comment_reference_id", nullable = true)
+    val commentReferenceId: Long? = null,
+
+    @Column(name = "action")
+    val action: String? = null,
+
+    @Column(name = "timestamp")
+    val timestamp: OffsetDateTime? = OffsetDateTime.now(),
+
     ) {
     companion object {
         const val TABLE_NAME = "notification_table"
