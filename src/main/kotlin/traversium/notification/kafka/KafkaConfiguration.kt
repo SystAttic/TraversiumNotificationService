@@ -37,7 +37,7 @@ class KafkaConfiguration(val kafkaProperties: KafkaProperties) {
     ): ConsumerFactory<String, KafkaStreamData> {
         return DefaultKafkaConsumerFactory(
             kafkaConsumerConfig(
-                kafkaProperties.bootstrapServer,
+                kafkaProperties.bootstrapServers,
                 "${kafkaProperties.consumerGroupPrefix?.let { "$it-" } ?: ""}notification-group",
                 kafkaProperties.fetchMaxBytes,
                 kafkaProperties.maxPartitionFetchBytes,

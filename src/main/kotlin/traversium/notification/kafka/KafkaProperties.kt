@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding
  */
 @ConfigurationProperties(prefix = "spring.kafka")
 class KafkaProperties @ConstructorBinding constructor(
-    val bootstrapServer: String = "localhost:9092",
+    val bootstrapServers: String = "localhost:9092",
     val topic: String = "notification-topic",
     val partitions: Set<Int> = emptySet(),
     val consumerGroupPrefix: String?,
