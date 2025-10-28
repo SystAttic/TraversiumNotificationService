@@ -1,6 +1,7 @@
 package traversium.notification.service
 
 import org.springframework.data.domain.PageRequest
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Sinks
@@ -50,6 +51,20 @@ class NotificationService(
         val pageable = PageRequest.of(offset / limit, limit)
         return notificationRepository.findByReceiverId(userId, pageable)
             .map { it.toDto() }.toList()
+    }
+
+    @Scheduled(fixedRate = 30_000)
+    fun sendHealthCheck() {
+        val heartbeat = NotificationDto(
+            senderId = "system",
+            recipientId = "ALL",
+            collectionReferenceId = null,
+            nodeReferenceId = null,
+            commentReferenceId = null,
+            type = NotificationType.HEALTHCHECK
+        )
+
+        notificationSink.tryEmitNext(heartbeat)
     }
 
     private fun findNotificationType(notificationStreamData: NotificationStreamData): NotificationType {

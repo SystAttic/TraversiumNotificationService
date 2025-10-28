@@ -12,6 +12,7 @@ import reactor.core.publisher.Sinks
 import reactor.core.scheduler.Schedulers
 import reactor.util.concurrent.Queues
 import traversium.notification.dto.NotificationDto
+import traversium.notification.mapper.NotificationType
 import traversium.notification.service.NotificationService
 import java.util.*
 
@@ -34,7 +35,7 @@ class NotificationController(
             .map { notificationDto ->
                 ServerSentEvent.builder(notificationDto)
                     .id(UUID.randomUUID().toString())
-                    .event("Notification")
+                    .event(if (notificationDto.type == NotificationType.HEALTHCHECK) "heartbeat" else "Notification")
                     .data(notificationDto)
                     .build()
             }

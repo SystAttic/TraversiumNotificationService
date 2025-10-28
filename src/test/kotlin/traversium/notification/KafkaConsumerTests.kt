@@ -58,7 +58,7 @@ class KafkaConsumerTests(
 
         val savedNotification = notificationRepository.findAll().first()
         assertThat(savedNotification.senderId).isEqualTo("sender1")
-        assertThat(savedNotification.receiverIds).containsExactly("receiver1", "receiver2")
+        assertThat(savedNotification.receiverId).isEqualTo("receiver1")
         assertThat(savedNotification.collectionReferenceId).isEqualTo(123L)
 
         notificationRepository.delete(savedNotification)
