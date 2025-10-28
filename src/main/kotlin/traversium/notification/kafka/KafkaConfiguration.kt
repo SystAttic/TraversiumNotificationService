@@ -49,7 +49,7 @@ class KafkaConfiguration(val kafkaProperties: KafkaProperties) {
     }
 
     @Bean
-    fun auditorKafkaEventListenerContainer(
+    fun notificationEventListenerContainer(
         notificationKafkaConsumer: KafkaConsumer,
         consumerFactory: ConsumerFactory<String, KafkaStreamData>
     ): KafkaMessageListenerContainer<String, KafkaStreamData> = KafkaMessageListenerContainer(
