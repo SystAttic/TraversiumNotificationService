@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import traversium.notification.mapper.NotificationType
 import java.time.OffsetDateTime
 
 /**
@@ -13,7 +14,7 @@ import java.time.OffsetDateTime
  */
 @Entity
 @Table(name = Notification.TABLE_NAME)
-class Notification(
+data class Notification(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +24,8 @@ class Notification(
     @Column(name = "sender_id", nullable = false)
     val senderId: String? = null,
 
-    @Column(name = "receiver_ids", nullable = false)
-    val receiverIds: List<String> = emptyList(),
+    @Column(name = "receiver_id", nullable = false)
+    val receiverId: String? = null,
 
     @Column(name = "collection_reference_id", nullable = true)
     val collectionReferenceId: Long? = null,
@@ -36,11 +37,13 @@ class Notification(
     val commentReferenceId: Long? = null,
 
     @Column(name = "action")
-    val action: String? = null,
+    val action: NotificationType? = null,
 
     @Column(name = "timestamp")
     val timestamp: OffsetDateTime? = OffsetDateTime.now(),
 
+    @Column(name = "seen")
+    val seen: Boolean = false,
     ) {
     companion object {
         const val TABLE_NAME = "notification_table"

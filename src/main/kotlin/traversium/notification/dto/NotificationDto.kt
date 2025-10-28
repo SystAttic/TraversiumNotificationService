@@ -7,7 +7,7 @@ import traversium.notification.mapper.NotificationType
  */
 data class NotificationDto(
     val senderId: String,
-    val recipientIds: List<String>,
+    val recipientId: String,
     val type: NotificationType,
     val collectionReferenceId: Long?,
     val nodeReferenceId: Long?,

@@ -42,8 +42,10 @@ class KafkaConsumerTests(
             timestamp = OffsetDateTime.now(),
             senderId = "sender1",
             receiverIds = listOf("receiver1", "receiver2"),
-            message = "Hello Kafka!",
-            referenceId = 123L
+            collectionReferenceId = 123L,
+            nodeReferenceId = null,
+            commentReferenceId = null,
+            action = "CREATE"
         )
 
         val json = ObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(testData)
@@ -56,9 +58,8 @@ class KafkaConsumerTests(
 
         val savedNotification = notificationRepository.findAll().first()
         assertThat(savedNotification.senderId).isEqualTo("sender1")
-        assertThat(savedNotification.content).isEqualTo("Hello Kafka!")
-        assertThat(savedNotification.referenceId).isEqualTo(123L)
         assertThat(savedNotification.receiverIds).containsExactly("receiver1", "receiver2")
+        assertThat(savedNotification.collectionReferenceId).isEqualTo(123L)
 
         notificationRepository.delete(savedNotification)
     }
