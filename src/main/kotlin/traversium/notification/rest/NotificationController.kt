@@ -1,11 +1,7 @@
 package traversium.notification.rest
 
 import org.springframework.http.codec.ServerSentEvent
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.BufferOverflowStrategy
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Sinks
@@ -41,15 +37,14 @@ class NotificationController(
             }
     }
 
-    @GetMapping("unseen/{userId}")
-    fun getUnseenNotificationsCount(@PathVariable("userId") userId: String): Long =
-        notificationService.getUnseenNotificationsCount(userId)
+    @GetMapping("/unseen")
+    fun getUnseenNotificationsCountForUser(): Long =
+        notificationService.getUnseenNotificationsCount()
 
-    @GetMapping("/{userId}")
-    fun getNotifications(
-        @PathVariable userId: String,
+    @GetMapping
+    fun getNotificationsForUser(
         @RequestParam(defaultValue = "0") offset: Int,
         @RequestParam(defaultValue = "20") limit: Int
     ): List<NotificationDto> =
-        notificationService.getNotificationsForUser(userId, offset, limit)
+        notificationService.getNotificationsForUser(offset, limit)
 }

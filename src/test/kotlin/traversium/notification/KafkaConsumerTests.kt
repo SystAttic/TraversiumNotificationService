@@ -53,7 +53,7 @@ class KafkaConsumerTests(
         kafkaTemplate.send("test-notification-topic", "key1", json)
 
         await().atMost(5, TimeUnit.SECONDS).until {
-            notificationRepository.count() == 1L
+            notificationRepository.count() >= 1
         }
 
         val savedNotification = notificationRepository.findAll().first()

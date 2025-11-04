@@ -2,6 +2,7 @@ package traversium.notification.service
 
 import org.springframework.data.domain.PageRequest
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Sinks
@@ -19,7 +20,8 @@ import traversium.notification.mapper.NotificationType
 @Service
 class NotificationService(
     private val notificationRepository: NotificationRepository,
-    private val notificationSink: Sinks.Many<NotificationDto>
+    private val notificationSink: Sinks.Many<NotificationDto>,
+    private val firebaseService: FirebaseService
 ) {
     @Transactional
     fun saveNotification(streamData: NotificationStreamData): List<Notification> {
@@ -44,12 +46,12 @@ class NotificationService(
         return savedNotifications
     }
 
-    fun getUnseenNotificationsCount(userId: String): Long =
-        notificationRepository.countByReceiverIdAndSeenFalse(userId)
+    fun getUnseenNotificationsCount(): Long =
+        notificationRepository.countByReceiverIdAndSeenFalse(getFirebaseIdFromContext())
 
-    fun getNotificationsForUser(userId: String, offset: Int, limit: Int): List<NotificationDto> {
+    fun getNotificationsForUser(offset: Int, limit: Int): List<NotificationDto> {
         val pageable = PageRequest.of(offset / limit, limit)
-        return notificationRepository.findByReceiverId(userId, pageable)
+        return notificationRepository.findByReceiverId(getFirebaseIdFromContext(), pageable)
             .map { it.toDto() }.toList()
     }
 
@@ -98,4 +100,6 @@ class NotificationService(
         }
     }
 
+    private fun getFirebaseIdFromContext() =
+        firebaseService.extractUidFromToken(SecurityContextHolder.getContext().authentication.credentials as String)
 }
