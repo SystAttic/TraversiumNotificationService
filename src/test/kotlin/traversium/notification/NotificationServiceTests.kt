@@ -22,7 +22,7 @@ import kotlin.test.Test
 /**
  * @author Maja Razinger
  */
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @ActiveProfiles("test")
 @SpringBootTest(classes = [NotificationServiceApplication::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
