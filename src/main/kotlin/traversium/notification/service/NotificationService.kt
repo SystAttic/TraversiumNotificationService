@@ -1,18 +1,25 @@
 package traversium.notification.service
 
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.codec.ServerSentEvent
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.BufferOverflowStrategy
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Sinks
+import reactor.core.scheduler.Schedulers
+import reactor.util.concurrent.Queues
 import traversium.notification.db.model.Notification
 import traversium.notification.db.repository.NotificationRepository
 import traversium.notification.dto.NotificationDto
+import traversium.notification.exceptions.NotificationExceptions
 import traversium.notification.kafka.NotificationStreamData
 import traversium.notification.mapper.NotificationMapper.toDto
 import traversium.notification.mapper.NotificationMapper.toEntities
 import traversium.notification.mapper.NotificationType
+import java.util.*
 
 /**
  * @author Maja Razinger
@@ -33,8 +40,8 @@ class NotificationService(
 
         savedNotifications.forEach {
             val notificationDto = NotificationDto(
-                senderId = it.senderId ?: throw NullPointerException("senderId"),
-                recipientId = it.receiverId ?: throw NullPointerException("receiverId"),
+                senderId = it.senderId ?: throw NotificationExceptions.InvalidNotificationDataException("senderId is null"),
+                recipientId = it.receiverId ?: throw NotificationExceptions.InvalidNotificationDataException("receiverId is null"),
                 collectionReferenceId = it.collectionReferenceId,
                 nodeReferenceId = it.nodeReferenceId,
                 commentReferenceId = it.commentReferenceId,
@@ -53,6 +60,21 @@ class NotificationService(
         val pageable = PageRequest.of(offset / limit, limit)
         return notificationRepository.findByReceiverId(getFirebaseIdFromContext(), pageable)
             .map { it.toDto() }.toList()
+    }
+
+    fun sendNotificationsFlux(): Flux<ServerSentEvent<NotificationDto>>? {
+        val userId = getFirebaseIdFromContext()
+        return notificationSink.asFlux()
+            .onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, BufferOverflowStrategy.DROP_OLDEST)
+            .publishOn(Schedulers.boundedElastic())
+            .filter { it.recipientId == userId }
+            .map { notificationDto ->
+                ServerSentEvent.builder(notificationDto)
+                    .id(UUID.randomUUID().toString())
+                    .event(if (notificationDto.type == NotificationType.HEALTHCHECK) "heartbeat" else "Notification")
+                    .data(notificationDto)
+                    .build()
+            }
     }
 
     @Scheduled(fixedRate = 30_000)
