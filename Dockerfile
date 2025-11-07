@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk
 MAINTAINER Traversium Developers
-WORKDIR /opt/user-service
+WORKDIR /opt/notification-service
 
 COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/opt/user-service/app.jar"]
+ENTRYPOINT ["java","-jar","/opt/notification-service/app.jar"]
