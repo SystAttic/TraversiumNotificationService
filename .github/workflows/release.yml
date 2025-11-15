@@ -94,7 +94,7 @@ jobs:
         run: mvn clean package -DskipTests
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
 
       - name: Deploy notification-models to GitHub Packages
         run: |
