@@ -1,6 +1,7 @@
 package traversium.notification.security
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.UserRecord
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -8,8 +9,9 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import traversium.commonmultitenancy.TenantContext
+import traversium.commonmultitenancy.TenantUtils
 import traversium.notification.service.FirebaseService
-import traversium.notification.service.TenantService
 
 
 /**
@@ -18,7 +20,6 @@ import traversium.notification.service.TenantService
 @Component
 class FirebaseAuthenticationFilter(
     private val firebaseService: FirebaseService,
-    private val tenantService: TenantService,
     private val firebaseAuth: FirebaseAuth,
 ) : OncePerRequestFilter(){
     override fun doFilterInternal(
@@ -35,22 +36,32 @@ class FirebaseAuthenticationFilter(
 
             val decodedToken = firebaseAuth.verifyIdToken(token)
             val uid = decodedToken.uid
+            val tenantId = decodedToken.tenantId
+
+            TenantContext.setTenant(TenantUtils.sanitizeTenantIdForSchema(tenantId ?: "public"))
+
+            val userRecord = if (tenantId != null) {
+                try {
+                    val tenantAuth = firebaseAuth.tenantManager.getAuthForTenant(tenantId)
+                    tenantAuth.getUser(uid)
+                } catch (e: FirebaseAuthException) {
+                    logger.error("Failed to get user from tenant $tenantId: ${e.message}")
+                    throw e
+                }
+            } else {
+                firebaseAuth.getUser(uid)
+            }
 
             SecurityContextHolder.getContext().authentication = TraversiumAuthentication(
-                userRecordToPrincipal(firebaseAuth.getUser(uid)),
+                userRecordToPrincipal(userRecord),
                 null,
                 emptyList(),
                 token
             )
 
-            val tenantId = firebaseService.extractTenantIdFromToken(token)
-            tenantService.setCurrentTenant(tenantId)
-
             filterChain.doFilter(request, response)
         } catch (ex: Exception) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
-        } finally {
-            tenantService.clear()
         }
     }
 
@@ -60,4 +71,19 @@ class FirebaseAuthenticationFilter(
         //PersonalDataType.GOOGLE,
         userRecord.photoUrl
     )
+
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.requestURI.removePrefix(request.contextPath)
+
+        val exactPaths = setOf(
+            "/swagger-ui.html"
+        )
+        val prefixPaths = listOf(
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/swagger-resources"
+        )
+
+        return path in exactPaths || prefixPaths.any { path.startsWith(it) }
+    }
 }
