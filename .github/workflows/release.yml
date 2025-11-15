@@ -42,12 +42,15 @@ jobs:
         run: |
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          
+
           RELEASE_VERSION=${CURRENT_VERSION%-SNAPSHOT}
           echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
-          
+
           echo "Current version: $CURRENT_VERSION"
           echo "Release version: $RELEASE_VERSION"
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
 
       - name: Extract release notes from CHANGELOG
         id: changelog
@@ -94,7 +97,7 @@ jobs:
         run: mvn clean package -DskipTests
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
 
       - name: Deploy parent pom to GitHub Packages
         run: |
@@ -171,7 +174,18 @@ jobs:
             docker pull ghcr.io/${{ github.repository_owner }}/traversium-notification-service:${{ steps.versions.outputs.release_version }}
             ```
 
-            **Maven Dependency (notification-models):**
+            **Maven Dependencies:**
+
+            Parent POM:
+            ```xml
+            <parent>
+              <groupId>traversium</groupId>
+              <artifactId>NotificationService</artifactId>
+              <version>${{ steps.versions.outputs.release_version }}</version>
+            </parent>
+            ```
+
+            notification-models:
             ```xml
             <dependency>
               <groupId>traversium</groupId>
