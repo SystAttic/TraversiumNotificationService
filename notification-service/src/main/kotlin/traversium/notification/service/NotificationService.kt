@@ -19,6 +19,7 @@ import traversium.notification.kafka.NotificationStreamData
 import traversium.notification.mapper.NotificationMapper.toDto
 import traversium.notification.mapper.NotificationMapper.toEntities
 import traversium.notification.mapper.NotificationType
+import java.time.OffsetDateTime
 import java.util.*
 
 /**
@@ -45,7 +46,8 @@ class NotificationService(
                 collectionReferenceId = it.collectionReferenceId,
                 nodeReferenceId = it.nodeReferenceId,
                 commentReferenceId = it.commentReferenceId,
-                type = notificationType
+                type = notificationType,
+                timestamp = it.timestamp!!
             )
             notificationSink.tryEmitNext(notificationDto)
         }
@@ -85,7 +87,8 @@ class NotificationService(
             collectionReferenceId = null,
             nodeReferenceId = null,
             commentReferenceId = null,
-            type = NotificationType.HEALTHCHECK
+            type = NotificationType.HEALTHCHECK,
+            timestamp = OffsetDateTime.now()
         )
 
         notificationSink.tryEmitNext(heartbeat)
