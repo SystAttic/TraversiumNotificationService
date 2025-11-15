@@ -97,7 +97,7 @@ jobs:
         run: mvn clean package -DskipTests
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
 
       - name: Deploy parent pom to GitHub Packages
         run: |
