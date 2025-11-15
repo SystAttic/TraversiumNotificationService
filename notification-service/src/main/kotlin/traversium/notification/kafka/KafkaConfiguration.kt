@@ -3,6 +3,7 @@ package traversium.notification.kafka
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.errors.RecordDeserializationException
@@ -65,6 +66,7 @@ class KafkaConfiguration(val kafkaProperties: KafkaProperties) {
 
     @Bean
     fun kafkaObjectMapper(): ObjectMapper = ObjectMapper()
+        .registerModule(KotlinModule.Builder().build())
         .registerModule(JavaTimeModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
