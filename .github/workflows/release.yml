@@ -28,6 +28,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - name: Configure Git
         run: |
@@ -89,6 +92,9 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy notification-models to GitHub Packages
         run: |
