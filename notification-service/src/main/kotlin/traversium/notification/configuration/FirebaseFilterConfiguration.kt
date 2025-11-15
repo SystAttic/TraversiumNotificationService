@@ -26,9 +26,7 @@ class FirebaseFilterConfiguration {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/rest/v1/users/exists").permitAll()
                     .requestMatchers("/rest/**").authenticated()
-                    .requestMatchers("/graphql").authenticated()
                     .anyRequest().permitAll()
             }
             .addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)

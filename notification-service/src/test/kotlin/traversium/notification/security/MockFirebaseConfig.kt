@@ -1,5 +1,6 @@
-package travesium.userservice.security
+package traversium.notification.security
 
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseToken
 import com.google.firebase.auth.UserRecord
@@ -21,6 +22,12 @@ class MockFirebaseConfig {
 
     fun setTokenData(token: String, uid: String, email: String) {
         tokenMap[token] = uid to email
+    }
+
+    @Bean
+    @Primary
+    fun initializeFirebase(): FirebaseApp {
+        return mock(FirebaseApp::class.java)
     }
 
     @Bean

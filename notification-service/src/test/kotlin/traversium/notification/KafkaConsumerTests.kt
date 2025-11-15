@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -28,6 +29,7 @@ import kotlin.test.Test
 @ExtendWith(SpringExtension::class)
 @EmbeddedKafka(partitions = 1, topics = ["test-notification-topic"], bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 @ActiveProfiles("test")
+@ContextConfiguration(classes = [TestMultitenancyConfig::class, traversium.notification.security.MockFirebaseConfig::class])
 class KafkaConsumerTests(
 ) {
 

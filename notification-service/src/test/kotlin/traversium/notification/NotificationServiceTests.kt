@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional
 import traversium.notification.db.model.Notification
 import traversium.notification.db.repository.NotificationRepository
 import traversium.notification.mapper.NotificationType
+import traversium.notification.security.MockFirebaseConfig
 import traversium.notification.service.NotificationService
-import travesium.userservice.security.MockFirebaseConfig
 import kotlin.test.Test
 
 /**
@@ -24,11 +24,14 @@ import kotlin.test.Test
  */
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @ActiveProfiles("test")
-@SpringBootTest(classes = [NotificationServiceApplication::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    classes = [NotificationServiceApplication::class],
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
 @ExtendWith(SpringExtension::class)
 @Transactional
 @DirtiesContext
-@ContextConfiguration(classes = [MockFirebaseConfig::class])
+@ContextConfiguration(classes = [MockFirebaseConfig::class, TestMultitenancyConfig::class])
 class NotificationServiceTests@Autowired constructor(
     @Autowired val notificationService: NotificationService,
     @Autowired private val firebaseConfig: MockFirebaseConfig,
