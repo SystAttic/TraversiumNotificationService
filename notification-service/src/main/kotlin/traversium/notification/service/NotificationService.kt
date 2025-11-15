@@ -121,7 +121,10 @@ class NotificationService(
                 "REMOVE_COLLABORATOR" -> NotificationType.REMOVE_COLLABORATOR
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
-            else -> throw IllegalArgumentException("Invalid notification data")
+            else -> when (action) {
+                "FOLLOW" -> NotificationType.FOLLOW_USER
+                else -> throw IllegalArgumentException("Unknown action: $action")
+            }
         }
     }
 
