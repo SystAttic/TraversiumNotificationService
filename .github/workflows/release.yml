@@ -96,8 +96,9 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
 
-      - name: Deploy notification-models to GitHub Packages
+      - name: Deploy parent POM and notification-models to GitHub Packages
         run: |
+          mvn deploy -N -DskipTests
           mvn deploy -pl notification-models -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
