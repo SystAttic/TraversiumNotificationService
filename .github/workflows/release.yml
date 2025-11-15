@@ -94,11 +94,16 @@ jobs:
         run: mvn clean package -DskipTests
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
 
-      - name: Deploy parent POM and notification-models to GitHub Packages
+      - name: Deploy parent pom to GitHub Packages
         run: |
           mvn deploy -N -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy notification-models to GitHub Packages
+        run: |
           mvn deploy -pl notification-models -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -166,7 +171,18 @@ jobs:
             docker pull ghcr.io/${{ github.repository_owner }}/traversium-notification-service:${{ steps.versions.outputs.release_version }}
             ```
 
-            **Maven Dependency (notification-models):**
+            **Maven Dependencies:**
+
+            Parent POM:
+            ```xml
+            <parent>
+              <groupId>traversium</groupId>
+              <artifactId>NotificationService</artifactId>
+              <version>${{ steps.versions.outputs.release_version }}</version>
+            </parent>
+            ```
+
+            notification-models:
             ```xml
             <dependency>
               <groupId>traversium</groupId>
