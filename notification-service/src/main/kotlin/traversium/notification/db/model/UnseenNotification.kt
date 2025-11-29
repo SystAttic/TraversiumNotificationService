@@ -8,12 +8,12 @@ import java.time.OffsetDateTime
  * @author Maja Razinger
  */
 @Entity
-@Table(name = Notification.TABLE_NAME)
-data class Notification(
+@Table(name = UnseenNotification.TABLE_NAME)
+data class UnseenNotification(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notification_id", unique = true, nullable = false, updatable = false, length = 36)
+    @Column(name = "notification_id", unique = true, nullable = false, updatable = false)
     val notificationId: Long? = null,
 
     @Column(name = "sender_id", nullable = false)
@@ -28,6 +28,9 @@ data class Notification(
     @Column(name = "node_reference_id", nullable = true)
     val nodeReferenceId: Long? = null,
 
+    @Column(name = "media_reference_id", nullable = true)
+    val mediaReferenceId: Long? = null,
+
     @Column(name = "comment_reference_id", nullable = true)
     val commentReferenceId: Long? = null,
 
@@ -36,11 +39,8 @@ data class Notification(
 
     @Column(name = "timestamp")
     val timestamp: OffsetDateTime? = OffsetDateTime.now(),
-
-    @Column(name = "seen")
-    val seen: Boolean = false,
-    ) {
+) {
     companion object {
-        const val TABLE_NAME = "notification_table"
+        const val TABLE_NAME = "unseen_notification"
     }
 }

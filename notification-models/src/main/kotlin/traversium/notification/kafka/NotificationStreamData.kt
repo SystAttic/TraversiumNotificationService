@@ -13,6 +13,7 @@ data class NotificationStreamData(
     @JsonProperty("receiverIds") val receiverIds: List<String>,
     @JsonProperty("collectionReferenceId") val collectionReferenceId: Long?,
     @JsonProperty("nodeReferenceId") val nodeReferenceId: Long?,
+    @JsonProperty("mediaReferenceId") val mediaReferenceId: Long?,
     @JsonProperty("commentReferenceId") val commentReferenceId: Long?,
     @JsonProperty("action") val action: String,
 )

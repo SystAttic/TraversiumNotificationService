@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import traversium.notification.dto.NotificationDto
+import traversium.notification.dto.BundleIdDto
+import traversium.notification.dto.NotificationBundleListDto
 import traversium.notification.service.NotificationService
 
 /**
@@ -27,15 +28,15 @@ class NotificationController(
     @Operation(
         operationId = "sseNotifications",
         tags = ["Notifications"],
-        summary = "SSE Notifications",
-        description = "Establishes a Server-Sent Events (SSE) connection to stream real-time notifications to the authenticated user.",
+        summary = "SSE Notification Bundle IDs",
+        description = "Establishes a Server-Sent Events (SSE) connection to stream real-time notification bundle IDs to the authenticated user.",
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "Successfully established SSE connection for notifications.",
+                description = "Successfully established SSE connection for notification bundle IDs.",
                 content = [Content(
                     mediaType = MediaType.TEXT_EVENT_STREAM_VALUE,
-                    schema = Schema(implementation = NotificationDto::class)
+                    schema = Schema(implementation = BundleIdDto::class)
                 )]
             ),
             ApiResponse(
@@ -44,8 +45,8 @@ class NotificationController(
             )
         ]
     )
-    fun sse(): Flux<ServerSentEvent<NotificationDto>>? =
-        notificationService.sendNotificationsFlux()
+    fun sse(): Flux<ServerSentEvent<BundleIdDto>>? =
+        notificationService.sendBundleIdsFlux()
 
     @GetMapping("/unseen")
     @Operation(
@@ -76,15 +77,15 @@ class NotificationController(
     @Operation(
         operationId = "getNotificationsForUser",
         tags = ["Notifications"],
-        summary = "Get Notifications for User",
-        description = "Retrieves a paginated list of notifications for the authenticated user.",
+        summary = "Get Notification Bundles for User",
+        description = "Retrieves notification bundles for the authenticated user. Returns both unseen notification bundles (not yet marked as seen) and paginated seen bundles.",
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "Successfully retrieved notifications.",
+                description = "Successfully retrieved notification bundles.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = NotificationDto::class)
+                    schema = Schema(implementation = NotificationBundleListDto::class)
                 )]
             ),
             ApiResponse(
@@ -96,6 +97,6 @@ class NotificationController(
     fun getNotificationsForUser(
         @RequestParam(defaultValue = "0") offset: Int,
         @RequestParam(defaultValue = "20") limit: Int
-    ): List<NotificationDto> =
+    ): NotificationBundleListDto =
         notificationService.getNotificationsForUser(offset, limit)
 }

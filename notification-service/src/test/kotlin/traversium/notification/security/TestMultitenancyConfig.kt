@@ -1,4 +1,4 @@
-package traversium.notification
+package traversium.notification.security
 
 import org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl
 import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider
