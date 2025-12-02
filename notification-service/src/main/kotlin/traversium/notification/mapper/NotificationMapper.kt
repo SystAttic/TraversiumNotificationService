@@ -28,11 +28,11 @@ object NotificationMapper {
     fun SeenNotificationBundle.toDto(): NotificationBundleDto {
         return NotificationBundleDto(
             bundleId = this.bundleId ?: throw NotificationExceptions.InvalidNotificationDataException("SeenNotificationBundle bundleId is null"),
-            senderIds = this.senderIds.toList(),
+            senderIds = this.senderIds,
             type = this.action,
             collectionReferenceId = this.collectionReferenceId,
             nodeReferenceId = this.nodeReferenceId,
-            mediaReferenceIds = this.mediaReferenceIds?.toList(),
+            mediaReferenceIds = this.mediaReferenceIds,
             commentReferenceId = this.commentReferenceId,
             notificationCount = this.notificationCount,
             firstTimestamp = this.firstTimestamp,

@@ -18,15 +18,15 @@ data class SeenNotificationBundle(
     @Column(name = "uuid", unique = true, nullable = false, updatable = false)
     val uuid: Long? = null,
 
-    @Column(name = "bundle_id", unique = true, nullable = false, updatable = false, length = 500)
+    @Column(name = "bundle_id", nullable = false, updatable = false, length = 500)
     val bundleId: String? = null,
 
     @Column(name = "receiver_id", nullable = false)
     val receiverId: String? = null,
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "sender_ids", nullable = false, columnDefinition = "text[]")
-    val senderIds: Array<String> = arrayOf(),
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "sender_ids", nullable = false)
+    val senderIds: List<String> = emptyList(),
 
     @Column(name = "action", nullable = false)
     val action: NotificationType = NotificationType.UNKNOWN,
@@ -37,9 +37,9 @@ data class SeenNotificationBundle(
     @Column(name = "node_reference_id", nullable = true)
     val nodeReferenceId: Long? = null,
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "media_reference_ids", nullable = true, columnDefinition = "bigint[]")
-    val mediaReferenceIds: Array<Long>? = null,
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "media_reference_ids", nullable = true)
+    val mediaReferenceIds: List<Long>? = null,
 
     @Column(name = "comment_reference_id", nullable = true)
     val commentReferenceId: Long? = null,

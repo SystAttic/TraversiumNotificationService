@@ -30,7 +30,7 @@ object BundleIdGenerator {
                 buildBundleId(receiverId, type, notification.collectionReferenceId, notification.nodeReferenceId)
 
             NotificationType.ADD_COMMENT, NotificationType.REPLY_COMMENT ->
-                buildBundleIdWithSender(receiverId, senderId, type, notification.mediaReferenceId, notification.commentReferenceId)
+                buildBundleIdWithSender(receiverId, senderId, type, notification.mediaReferenceId)
 
             NotificationType.CREATE_TRIP, NotificationType.DELETE_TRIP,
             NotificationType.CHANGE_TRIP_TITLE, NotificationType.CHANGE_TRIP_DESCRIPTION,

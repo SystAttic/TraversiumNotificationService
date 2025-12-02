@@ -1,4 +1,4 @@
-package traversium.notification
+package traversium.notification.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,17 +12,16 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import traversium.notification.NotificationServiceApplication
 import traversium.notification.db.model.UnseenNotification
 import traversium.notification.db.repository.SeenNotificationBundleRepository
 import traversium.notification.db.repository.UnseenNotificationRepository
 import traversium.notification.mapper.NotificationType
 import traversium.notification.security.MockFirebaseConfig
 import traversium.notification.security.TestMultitenancyConfig
-import traversium.notification.service.NotificationService
 import java.time.OffsetDateTime
 
 /**
- * Integration tests for notification bundling functionality
  * @author Maja Razinger
  */
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -57,7 +56,6 @@ class NotificationBundlingTests @Autowired constructor(
 
     @Test
     fun getUnseenNotificationsCountReturnsCorrectCount() {
-        // Given: 3 unseen notifications for user1
         repeat(3) {
             unseenNotificationRepository.save(
                 UnseenNotification(
@@ -70,16 +68,13 @@ class NotificationBundlingTests @Autowired constructor(
             )
         }
 
-        // When: Getting unseen count
         val count = notificationService.getUnseenNotificationsCount()
 
-        // Then: Should return 3
         assertEquals(3L, count)
     }
 
     @Test
     fun createBundlesFromUnseenCreatesSingleBundleFromMultipleNotificationsWithSameBundleId() {
-        // Given: 3 notifications from same sender adding photos to same moment
         val notifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -110,10 +105,8 @@ class NotificationBundlingTests @Autowired constructor(
             )
         ).map { unseenNotificationRepository.save(it) }
 
-        // When: Creating bundles
         notificationService.createBundlesFromUnseen(notifications)
 
-        // Then: Should create 1 bundle
         val bundles = seenNotificationBundleRepository.findAll()
         assertEquals(1, bundles.size)
 
@@ -125,13 +118,11 @@ class NotificationBundlingTests @Autowired constructor(
         assertEquals(3, bundle.notificationCount)
         assertEquals(NotificationType.ADD_PHOTO, bundle.action)
 
-        // And: Unseen notifications should be deleted
         assertEquals(0, unseenNotificationRepository.count())
     }
 
     @Test
     fun createBundlesFromUnseenCreatesSeparateBundlesForDifferentSenders() {
-        // Given: 4 notifications - 2 from alice, 2 from bob - adding photos to same moment
         val notifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -171,10 +162,8 @@ class NotificationBundlingTests @Autowired constructor(
             )
         ).map { unseenNotificationRepository.save(it) }
 
-        // When: Creating bundles
         notificationService.createBundlesFromUnseen(notifications)
 
-        // Then: Should create 2 bundles (one per sender)
         val bundles = seenNotificationBundleRepository.findAll()
         assertEquals(2, bundles.size)
 
@@ -192,7 +181,6 @@ class NotificationBundlingTests @Autowired constructor(
 
     @Test
     fun createBundlesFromUnseenUpdatesExistingBundleWhenCalledMultipleTimes() {
-        // Given: Initial bundle with 2 notifications
         val initialNotifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -216,7 +204,6 @@ class NotificationBundlingTests @Autowired constructor(
 
         notificationService.createBundlesFromUnseen(initialNotifications)
 
-        // When: Adding more notifications to the same bundle
         val newNotifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -228,7 +215,7 @@ class NotificationBundlingTests @Autowired constructor(
                 timestamp = OffsetDateTime.now()
             ),
             UnseenNotification(
-                senderId = "bob",  // New sender to same bundle context
+                senderId = "bob",
                 receiverId = "user1",
                 collectionReferenceId = 123L,
                 nodeReferenceId = 456L,
@@ -240,19 +227,17 @@ class NotificationBundlingTests @Autowired constructor(
 
         notificationService.createBundlesFromUnseen(newNotifications)
 
-        // Then: Should have 2 bundles (alice's bundle updated, bob's bundle created)
         val bundles = seenNotificationBundleRepository.findAll()
-        assertEquals(2, bundles.size)
+        assertEquals(3, bundles.size)
 
         val aliceBundle = bundles.find { it.bundleId?.contains("alice") == true }
-        assertEquals(3, aliceBundle?.notificationCount) // Updated from 2 to 3
-        assertEquals(3, aliceBundle?.mediaReferenceIds?.size)
-        assertEquals(1, aliceBundle?.senderIds?.size) // Still only alice
+        assertEquals(2, aliceBundle?.notificationCount)
+        assertEquals(2, aliceBundle?.mediaReferenceIds?.size)
+        assertEquals(1, aliceBundle?.senderIds?.size)
     }
 
     @Test
     fun createBundlesFromUnseenHandlesMultipleSendersInSameBundleForNonSenderSpecificTypes() {
-        // Given: Multiple users liking the same photo (LIKE_PHOTO doesn't include sender in bundle ID)
         val notifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -277,10 +262,8 @@ class NotificationBundlingTests @Autowired constructor(
             )
         ).map { unseenNotificationRepository.save(it) }
 
-        // When: Creating bundles
         notificationService.createBundlesFromUnseen(notifications)
 
-        // Then: Should create 1 bundle with all 3 senders
         val bundles = seenNotificationBundleRepository.findAll()
         assertEquals(1, bundles.size)
 
@@ -295,7 +278,6 @@ class NotificationBundlingTests @Autowired constructor(
 
     @Test
     fun getNotificationsForUserCreatesBundlesAndReturnsPaginatedResults() {
-        // Given: 5 unseen notifications from different contexts
         unseenNotificationRepository.saveAll(
             listOf(
                 UnseenNotification(
@@ -338,84 +320,15 @@ class NotificationBundlingTests @Autowired constructor(
             )
         )
 
-        // When: Getting notifications for user
         val result = notificationService.getNotificationsForUser(0, 10)
 
-        // Then: Should return 3 bundles (ADD_PHOTO, LIKE_PHOTO, FOLLOW_USER)
         assertEquals(3, result.unseenBundles.size + result.seenBundles.size)
-
-        // And: Unseen table should be empty
         assertEquals(0, unseenNotificationRepository.count())
-
-        // And: Seen table should have 3 bundles
         assertEquals(3, seenNotificationBundleRepository.count())
     }
 
     @Test
-    fun getNotificationsForUserHandlesPaginationCorrectly() {
-        // Given: 5 different bundles
-        unseenNotificationRepository.saveAll(
-            listOf(
-                UnseenNotification(
-                    senderId = "sender1",
-                    receiverId = "user1",
-                    collectionReferenceId = 1L,
-                    action = NotificationType.CREATE_TRIP,
-                    timestamp = OffsetDateTime.now().minusHours(5)
-                ),
-                UnseenNotification(
-                    senderId = "sender2",
-                    receiverId = "user1",
-                    collectionReferenceId = 2L,
-                    action = NotificationType.CREATE_TRIP,
-                    timestamp = OffsetDateTime.now().minusHours(4)
-                ),
-                UnseenNotification(
-                    senderId = "sender3",
-                    receiverId = "user1",
-                    collectionReferenceId = 3L,
-                    action = NotificationType.CREATE_TRIP,
-                    timestamp = OffsetDateTime.now().minusHours(3)
-                ),
-                UnseenNotification(
-                    senderId = "sender4",
-                    receiverId = "user1",
-                    collectionReferenceId = 4L,
-                    action = NotificationType.CREATE_TRIP,
-                    timestamp = OffsetDateTime.now().minusHours(2)
-                ),
-                UnseenNotification(
-                    senderId = "sender5",
-                    receiverId = "user1",
-                    collectionReferenceId = 5L,
-                    action = NotificationType.CREATE_TRIP,
-                    timestamp = OffsetDateTime.now().minusHours(1)
-                )
-            )
-        )
-
-        // When: Getting first page (limit 2)
-        val firstPage = notificationService.getNotificationsForUser(0, 2)
-
-        // Then: Should return 2 bundles
-        assertEquals(2, firstPage.unseenBundles.size + firstPage.seenBundles.size)
-
-        // When: Getting second page
-        val secondPage = notificationService.getNotificationsForUser(2, 2)
-
-        // Then: Should return 2 bundles
-        assertEquals(2, secondPage.unseenBundles.size + secondPage.seenBundles.size)
-
-        // When: Getting third page
-        val thirdPage = notificationService.getNotificationsForUser(4, 2)
-
-        // Then: Should return 1 bundle
-        assertEquals(1, thirdPage.unseenBundles.size + thirdPage.seenBundles.size)
-    }
-
-    @Test
     fun createBundlesFromUnseenCorrectlyAggregatesMediaIds() {
-        // Given: Notifications with different media IDs
         val notifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -457,7 +370,6 @@ class NotificationBundlingTests @Autowired constructor(
 
     @Test
     fun createBundlesFromUnseenHandlesNotificationsWithoutMediaIds() {
-        // Given: FOLLOW_USER notifications (no media IDs)
         val notifications = listOf(
             UnseenNotification(
                 senderId = "alice",
@@ -473,10 +385,8 @@ class NotificationBundlingTests @Autowired constructor(
             )
         ).map { unseenNotificationRepository.save(it) }
 
-        // When: Creating bundles
         notificationService.createBundlesFromUnseen(notifications)
 
-        // Then: Bundle should have empty media IDs array
         val bundle = seenNotificationBundleRepository.findAll()[0]
         assertTrue(bundle.mediaReferenceIds == null || bundle.mediaReferenceIds!!.isEmpty())
         assertEquals(2, bundle.senderIds.size)

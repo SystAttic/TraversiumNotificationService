@@ -1,9 +1,10 @@
-package traversium.notification
+package traversium.notification.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import traversium.notification.db.model.UnseenNotification
+import traversium.notification.exceptions.NotificationExceptions
 import traversium.notification.mapper.NotificationType
 import traversium.notification.util.BundleIdGenerator
 import java.time.OffsetDateTime
@@ -101,7 +102,7 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        assertEquals("recipient1-sender1-456-789-CREATE_MOMENT", bundleId)
+        assertEquals("recipient1-sender1-456-CREATE_MOMENT", bundleId)
     }
 
     @Test
@@ -117,7 +118,7 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        assertEquals("recipient1-sender1-456-789-DELETE_MOMENT", bundleId)
+        assertEquals("recipient1-sender1-456-DELETE_MOMENT", bundleId)
     }
 
     @Test
@@ -133,7 +134,6 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        // Should NOT include sender1 in the ID
         assertEquals("recipient1-456-789-CHANGE_MOMENT_TITLE", bundleId)
     }
 
@@ -166,7 +166,7 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        assertEquals("recipient1-123-456-ADD_COMMENT", bundleId)
+        assertEquals("recipient1-sender1-123-ADD_COMMENT", bundleId)
     }
 
     @Test
@@ -182,7 +182,7 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        assertEquals("recipient1-123-456-REPLY_COMMENT", bundleId)
+        assertEquals("recipient1-sender1-123-REPLY_COMMENT", bundleId)
     }
 
     @Test
@@ -197,7 +197,7 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        assertEquals("recipient1-789-CREATE_TRIP", bundleId)
+        assertEquals("recipient1-sender1-789-CREATE_TRIP", bundleId)
     }
 
     @Test
@@ -212,7 +212,7 @@ class BundleIdGeneratorTests {
 
         val bundleId = BundleIdGenerator.generateBundleId(notification)
 
-        assertEquals("recipient1-789-ADD_COLLABORATOR", bundleId)
+        assertEquals("recipient1-sender1-789-ADD_COLLABORATOR", bundleId)
     }
 
     @Test
@@ -252,7 +252,7 @@ class BundleIdGeneratorTests {
             timestamp = OffsetDateTime.now()
         )
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(NotificationExceptions.InvalidNotificationDataException::class.java) {
             BundleIdGenerator.generateBundleId(notification)
         }
     }
@@ -266,7 +266,7 @@ class BundleIdGeneratorTests {
             timestamp = OffsetDateTime.now()
         )
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(NotificationExceptions.InvalidNotificationDataException::class.java) {
             BundleIdGenerator.generateBundleId(notification)
         }
     }
@@ -280,7 +280,7 @@ class BundleIdGeneratorTests {
             timestamp = OffsetDateTime.now()
         )
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(NotificationExceptions.InvalidNotificationDataException::class.java) {
             BundleIdGenerator.generateBundleId(notification)
         }
     }

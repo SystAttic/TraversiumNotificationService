@@ -18,6 +18,7 @@ import traversium.notification.db.repository.UnseenNotificationRepository
 import traversium.notification.dto.BundleIdDto
 import traversium.notification.dto.NotificationBundleDto
 import traversium.notification.dto.NotificationBundleListDto
+import traversium.notification.kafka.ActionType
 import traversium.notification.kafka.NotificationStreamData
 import traversium.notification.mapper.NotificationMapper.toDto
 import traversium.notification.mapper.NotificationMapper.toUnseenEntities
@@ -101,6 +102,39 @@ class NotificationService(
     }
 
     @Transactional
+    fun getUnseenNotificationsForUser(offset: Int, limit: Int): List<NotificationBundleDto> {
+        val userId = getFirebaseIdFromContext()
+
+        val pageable = PageRequest.of(offset / limit, limit)
+        val unseenNotifications = unseenNotificationRepository.findByReceiverId(userId, pageable).content
+
+        if (unseenNotifications.isEmpty()) {
+            return emptyList()
+        }
+
+        val unseenBundlesData = unseenNotifications.groupBy { notification ->
+            BundleIdGenerator.generateBundleId(notification)
+        }
+
+        val unseenBundlesList = unseenBundlesData.map { (bundleId, notifications) ->
+            convertUnseenGroupToDto(bundleId, notifications)
+        }.sortedByDescending { it.lastTimestamp }
+
+        createBundlesFromUnseen(unseenNotifications)
+
+        return unseenBundlesList
+    }
+
+    fun getSeenNotificationsForUser(offset: Int, limit: Int): List<NotificationBundleDto> {
+        val userId = getFirebaseIdFromContext()
+
+        val pageable = PageRequest.of(offset / limit, limit)
+        return seenNotificationBundleRepository.findByReceiverId(userId, pageable)
+            .map { it.toDto() }
+            .toList()
+    }
+
+    @Transactional
     fun createBundlesFromUnseen(unseenNotifications: List<UnseenNotification>): Map<String, List<UnseenNotification>> {
         val bundleGroups = unseenNotifications.groupBy { notification ->
             BundleIdGenerator.generateBundleId(notification)
@@ -111,11 +145,11 @@ class NotificationService(
             val bundle = SeenNotificationBundle(
                 bundleId = bundleId,
                 receiverId = firstNotification.receiverId!!,
-                senderIds = notifications.map { it.senderId!! }.distinct().toTypedArray(),
+                senderIds = notifications.map { it.senderId!! }.distinct(),
                 action = firstNotification.action!!,
                 collectionReferenceId = firstNotification.collectionReferenceId,
                 nodeReferenceId = firstNotification.nodeReferenceId,
-                mediaReferenceIds = notifications.mapNotNull { it.mediaReferenceId }.distinct().toTypedArray(),
+                mediaReferenceIds = notifications.mapNotNull { it.mediaReferenceId }.distinct(),
                 commentReferenceId = firstNotification.commentReferenceId,
                 notificationCount = notifications.size,
                 firstTimestamp = notifications.minOf { it.timestamp!! },
@@ -179,42 +213,42 @@ class NotificationService(
 
         return when {
             collectionId != null && nodeId != null && mediaId != null && commentId == null -> when (action) {
-                "ADD" -> NotificationType.ADD_PHOTO
-                "REMOVE" -> NotificationType.REMOVE_PHOTO
+                ActionType.ADD -> NotificationType.ADD_PHOTO
+                ActionType.REMOVE -> NotificationType.REMOVE_PHOTO
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
             collectionId != null && nodeId != null -> when (action) {
-                "CREATE" -> NotificationType.CREATE_MOMENT
-                "DELETE" -> NotificationType.DELETE_MOMENT
-                "REARRANGE" -> NotificationType.REARRANGE_MOMENTS
-                "CHANGE_TITLE" -> NotificationType.CHANGE_MOMENT_TITLE
-                "CHANGE_COVER_PHOTO" -> NotificationType.CHANGE_MOMENT_COVER_PHOTO
-                "CHANGE_DESCRIPTION" -> NotificationType.CHANGE_MOMENT_DESCRIPTION
+                ActionType.CREATE -> NotificationType.CREATE_MOMENT
+                ActionType.DELETE -> NotificationType.DELETE_MOMENT
+                ActionType.REARRANGE -> NotificationType.REARRANGE_MOMENTS
+                ActionType.CHANGE_TITLE -> NotificationType.CHANGE_MOMENT_TITLE
+                ActionType.CHANGE_COVER_PHOTO -> NotificationType.CHANGE_MOMENT_COVER_PHOTO
+                ActionType.CHANGE_DESCRIPTION -> NotificationType.CHANGE_MOMENT_DESCRIPTION
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
             mediaId != null && commentId != null -> when (action) {
-                "ADD" -> NotificationType.ADD_COMMENT
-                "REPLY" -> NotificationType.REPLY_COMMENT
+                ActionType.ADD -> NotificationType.ADD_COMMENT
+                ActionType.REPLY -> NotificationType.REPLY_COMMENT
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
             mediaId != null -> when (action) {
-                "LIKE" -> NotificationType.LIKE_PHOTO
+                ActionType.LIKE -> NotificationType.LIKE_PHOTO
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
             collectionId != null -> when (action) {
-                "CREATE" -> NotificationType.CREATE_TRIP
-                "DELETE" -> NotificationType.DELETE_TRIP
-                "ADD_COLLABORATOR" -> NotificationType.ADD_COLLABORATOR
-                "REMOVE_COLLABORATOR" -> NotificationType.REMOVE_COLLABORATOR
-                "ADD_VIEWER" -> NotificationType.ADD_VIEWER
-                "REMOVE_VIEWER" -> NotificationType.REMOVE_VIEWER
-                "CHANGE_TITLE" -> NotificationType.CHANGE_TRIP_TITLE
-                "CHANGE_COVER_PHOTO" -> NotificationType.CHANGE_TRIP_COVER_PHOTO
-                "CHANGE_DESCRIPTION" -> NotificationType.CHANGE_TRIP_DESCRIPTION
+                ActionType.CREATE -> NotificationType.CREATE_TRIP
+                ActionType.DELETE -> NotificationType.DELETE_TRIP
+                ActionType.ADD_COLLABORATOR -> NotificationType.ADD_COLLABORATOR
+                ActionType.REMOVE_COLLABORATOR -> NotificationType.REMOVE_COLLABORATOR
+                ActionType.ADD_VIEWER -> NotificationType.ADD_VIEWER
+                ActionType.REMOVE_VIEWER -> NotificationType.REMOVE_VIEWER
+                ActionType.CHANGE_TITLE -> NotificationType.CHANGE_TRIP_TITLE
+                ActionType.CHANGE_COVER_PHOTO -> NotificationType.CHANGE_TRIP_COVER_PHOTO
+                ActionType.CHANGE_DESCRIPTION -> NotificationType.CHANGE_TRIP_DESCRIPTION
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
             else -> when (action) {
-                "FOLLOW" -> NotificationType.FOLLOW_USER
+                ActionType.FOLLOW -> NotificationType.FOLLOW_USER
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
         }

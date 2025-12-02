@@ -15,5 +15,24 @@ data class NotificationStreamData(
     @JsonProperty("nodeReferenceId") val nodeReferenceId: Long?,
     @JsonProperty("mediaReferenceId") val mediaReferenceId: Long?,
     @JsonProperty("commentReferenceId") val commentReferenceId: Long?,
-    @JsonProperty("action") val action: String,
+    @JsonProperty("action") val action: ActionType,
 )
+
+enum class ActionType {
+    CREATE,
+    UPDATE,
+    DELETE,
+    ADD,
+    REMOVE,
+    REARRANGE,
+    CHANGE_TITLE,
+    CHANGE_DESCRIPTION,
+    CHANGE_COVER_PHOTO,
+    LIKE,
+    REPLY,
+    FOLLOW,
+    ADD_COLLABORATOR,
+    ADD_VIEWER,
+    REMOVE_COLLABORATOR,
+    REMOVE_VIEWER,
+}
