@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.core.publisher.Sinks
 import reactor.util.concurrent.Queues
-import traversium.notification.dto.NotificationDto
+import traversium.notification.dto.BundleIdDto
 
 /**
  * @author Maja Razinger
@@ -13,6 +13,6 @@ import traversium.notification.dto.NotificationDto
 class ApplicationConfiguration {
 
     @Bean
-    fun notificationSink() : Sinks.Many<NotificationDto> =
+    fun bundleIdSink() : Sinks.Many<BundleIdDto> =
         Sinks.many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false)
 }

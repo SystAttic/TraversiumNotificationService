@@ -6,12 +6,15 @@ import java.time.OffsetDateTime
 /**
  * @author Maja Razinger
  */
-data class NotificationDto(
-    val senderId: String,
-    val recipientId: String,
+data class NotificationBundleDto(
+    val bundleId: String,
+    val senderIds: List<String>,
     val type: NotificationType,
     val collectionReferenceId: Long?,
     val nodeReferenceId: Long?,
+    val mediaReferenceIds: List<Long>?,
     val commentReferenceId: Long?,
-    val timestamp: OffsetDateTime,
+    val notificationCount: Int,
+    val firstTimestamp: OffsetDateTime,
+    val lastTimestamp: OffsetDateTime,
 )

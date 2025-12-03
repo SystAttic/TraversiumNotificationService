@@ -1,7 +1,8 @@
 package traversium.notification.mapper
 
-import traversium.notification.db.model.Notification
-import traversium.notification.dto.NotificationDto
+import traversium.notification.db.model.SeenNotificationBundle
+import traversium.notification.db.model.UnseenNotification
+import traversium.notification.dto.NotificationBundleDto
 import traversium.notification.exceptions.NotificationExceptions
 import traversium.notification.kafka.NotificationStreamData
 
@@ -10,28 +11,32 @@ import traversium.notification.kafka.NotificationStreamData
  */
 object NotificationMapper {
 
-    fun NotificationStreamData.toEntities(): List<Notification> {
+    fun NotificationStreamData.toUnseenEntities(): List<UnseenNotification> {
         return receiverIds.map { receiverId ->
-            Notification(
+            UnseenNotification(
                 senderId = this.senderId,
                 receiverId = receiverId,
                 collectionReferenceId = this.collectionReferenceId,
                 nodeReferenceId = this.nodeReferenceId,
+                mediaReferenceId = this.mediaReferenceId,
                 commentReferenceId = this.commentReferenceId,
                 timestamp = this.timestamp
             )
         }
     }
 
-    fun Notification.toDto(): NotificationDto {
-        return NotificationDto(
-            senderId = this.senderId ?: throw NotificationExceptions.InvalidNotificationDataException("senderId is not set"),
-            recipientId = this.receiverId ?: throw NotificationExceptions.InvalidNotificationDataException("receiverId is not set"),
+    fun SeenNotificationBundle.toDto(): NotificationBundleDto {
+        return NotificationBundleDto(
+            bundleId = this.bundleId ?: throw NotificationExceptions.InvalidNotificationDataException("SeenNotificationBundle bundleId is null"),
+            senderIds = this.senderIds,
+            type = this.action,
             collectionReferenceId = this.collectionReferenceId,
             nodeReferenceId = this.nodeReferenceId,
+            mediaReferenceIds = this.mediaReferenceIds,
             commentReferenceId = this.commentReferenceId,
-            type = this.action ?: throw NotificationExceptions.InvalidNotificationDataException("action is not set"),
-            timestamp = this.timestamp ?: throw NotificationExceptions.InvalidNotificationDataException("timestamp is not set"),
+            notificationCount = this.notificationCount,
+            firstTimestamp = this.firstTimestamp,
+            lastTimestamp = this.lastTimestamp
         )
     }
 
