@@ -26,6 +26,8 @@ class FirebaseFilterConfiguration {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers("/actuator/health/**").permitAll()
+                    .requestMatchers("/actuator/health").permitAll()
                     .requestMatchers("/rest/**").authenticated()
                     .anyRequest().permitAll()
             }
