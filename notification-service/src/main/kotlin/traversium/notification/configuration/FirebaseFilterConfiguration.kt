@@ -28,6 +28,8 @@ class FirebaseFilterConfiguration {
                 auth
                     .requestMatchers("/actuator/health/**").permitAll()
                     .requestMatchers("/actuator/health").permitAll()
+                    .requestMatchers("/actuator/prometheus/**").permitAll()
+                    .requestMatchers("/actuator/prometheus").permitAll()
                     .requestMatchers("/rest/**").authenticated()
                     .anyRequest().permitAll()
             }
