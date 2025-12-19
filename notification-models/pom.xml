@@ -8,7 +8,7 @@
     <parent>
         <groupId>traversium</groupId>
         <artifactId>notification-parent</artifactId>
-        <version>1.3.0</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>notification-models</artifactId>
