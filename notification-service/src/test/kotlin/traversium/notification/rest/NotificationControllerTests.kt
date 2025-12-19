@@ -118,7 +118,8 @@ class NotificationControllerTests @Autowired constructor(
                 receiverId = firebaseId,
                 senderIds = listOf("charlie"),
                 action = NotificationType.LIKE_PHOTO,
-                mediaReferenceIds = listOf(456L),
+                mediaReferenceId = 456L,
+                mediaCount = 1,
                 notificationCount = 1,
                 firstTimestamp = OffsetDateTime.now().minusHours(2),
                 lastTimestamp = OffsetDateTime.now().minusHours(2)
@@ -149,7 +150,8 @@ class NotificationControllerTests @Autowired constructor(
                     receiverId = firebaseId,
                     senderIds = listOf("sender$i"),
                     action = NotificationType.LIKE_PHOTO,
-                    mediaReferenceIds = listOf(i.toLong()),
+                    mediaReferenceId = i.toLong(),
+                    mediaCount = 1,
                     notificationCount = 1,
                     firstTimestamp = OffsetDateTime.now().minusHours(i.toLong()),
                     lastTimestamp = OffsetDateTime.now().minusHours(i.toLong())
@@ -223,7 +225,8 @@ class NotificationControllerTests @Autowired constructor(
                 receiverId = firebaseId,
                 senderIds = listOf("alice"),
                 action = NotificationType.LIKE_PHOTO,
-                mediaReferenceIds = listOf(123L),
+                mediaReferenceId = 123L,
+                mediaCount = 1,
                 notificationCount = 1,
                 firstTimestamp = OffsetDateTime.now().minusHours(1),
                 lastTimestamp = OffsetDateTime.now().minusHours(1)
@@ -235,7 +238,8 @@ class NotificationControllerTests @Autowired constructor(
                 receiverId = firebaseId,
                 senderIds = listOf("bob"),
                 action = NotificationType.LIKE_PHOTO,
-                mediaReferenceIds = listOf(456L),
+                mediaReferenceId = 456L,
+                mediaCount = 1,
                 notificationCount = 1,
                 firstTimestamp = OffsetDateTime.now().minusHours(2),
                 lastTimestamp = OffsetDateTime.now().minusHours(2)
@@ -262,7 +266,8 @@ class NotificationControllerTests @Autowired constructor(
                     receiverId = firebaseId,
                     senderIds = listOf("sender$i"),
                     action = NotificationType.LIKE_PHOTO,
-                    mediaReferenceIds = listOf(i.toLong()),
+                    mediaReferenceId = i.toLong(),
+                    mediaCount = 1,
                     notificationCount = 1,
                     firstTimestamp = OffsetDateTime.now().minusHours(i.toLong()),
                     lastTimestamp = OffsetDateTime.now().minusHours(i.toLong())

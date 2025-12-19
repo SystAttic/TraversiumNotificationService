@@ -114,7 +114,8 @@ class NotificationBundlingTests @Autowired constructor(
         assertEquals("user1-alice-123-456-ADD_PHOTO", bundle.bundleId)
         assertEquals(1, bundle.senderIds.size)
         assertEquals("alice", bundle.senderIds[0])
-        assertEquals(3, bundle.mediaReferenceIds?.size)
+        assertEquals(1L, bundle.mediaReferenceId)
+        assertEquals(3, bundle.mediaCount)
         assertEquals(3, bundle.notificationCount)
         assertEquals(NotificationType.ADD_PHOTO, bundle.action)
 
@@ -172,11 +173,11 @@ class NotificationBundlingTests @Autowired constructor(
 
         assertEquals("user1-alice-123-456-ADD_PHOTO", aliceBundle?.bundleId)
         assertEquals(2, aliceBundle?.notificationCount)
-        assertEquals(2, aliceBundle?.mediaReferenceIds?.size)
+        assertEquals(2, aliceBundle?.mediaCount)
 
         assertEquals("user1-bob-123-456-ADD_PHOTO", bobBundle?.bundleId)
         assertEquals(2, bobBundle?.notificationCount)
-        assertEquals(2, bobBundle?.mediaReferenceIds?.size)
+        assertEquals(2, bobBundle?.mediaCount)
     }
 
     @Test
@@ -232,7 +233,7 @@ class NotificationBundlingTests @Autowired constructor(
 
         val aliceBundle = bundles.find { it.bundleId?.contains("alice") == true }
         assertEquals(2, aliceBundle?.notificationCount)
-        assertEquals(2, aliceBundle?.mediaReferenceIds?.size)
+        assertEquals(2, aliceBundle?.mediaCount)
         assertEquals(1, aliceBundle?.senderIds?.size)
     }
 
@@ -362,10 +363,8 @@ class NotificationBundlingTests @Autowired constructor(
         notificationService.createBundlesFromUnseen(notifications)
 
         val bundle = seenNotificationBundleRepository.findAll()[0]
-        assertEquals(3, bundle.mediaReferenceIds?.size)
-        assertTrue(bundle.mediaReferenceIds!!.contains(10L))
-        assertTrue(bundle.mediaReferenceIds!!.contains(20L))
-        assertTrue(bundle.mediaReferenceIds!!.contains(30L))
+        assertEquals(10L, bundle.mediaReferenceId)
+        assertEquals(3, bundle.mediaCount)
     }
 
     @Test
@@ -388,7 +387,8 @@ class NotificationBundlingTests @Autowired constructor(
         notificationService.createBundlesFromUnseen(notifications)
 
         val bundle = seenNotificationBundleRepository.findAll()[0]
-        assertTrue(bundle.mediaReferenceIds == null || bundle.mediaReferenceIds!!.isEmpty())
+        assertEquals(null, bundle.mediaReferenceId)
+        assertEquals(null, bundle.mediaCount)
         assertEquals(2, bundle.senderIds.size)
         assertEquals(2, bundle.notificationCount)
     }

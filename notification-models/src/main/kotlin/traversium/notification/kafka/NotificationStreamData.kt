@@ -14,6 +14,7 @@ data class NotificationStreamData(
     @JsonProperty("collectionReferenceId") val collectionReferenceId: Long?,
     @JsonProperty("nodeReferenceId") val nodeReferenceId: Long?,
     @JsonProperty("mediaReferenceId") val mediaReferenceId: Long?,
+    @JsonProperty("mediaCount") val mediaCount: Int?,
     @JsonProperty("commentReferenceId") val commentReferenceId: Long?,
     @JsonProperty("action") val action: ActionType,
 )
@@ -28,6 +29,7 @@ enum class ActionType {
     CHANGE_TITLE,
     CHANGE_DESCRIPTION,
     CHANGE_COVER_PHOTO,
+    CHANGE_VISIBILITY,
     LIKE,
     REPLY,
     FOLLOW,

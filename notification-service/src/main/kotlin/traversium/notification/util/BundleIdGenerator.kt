@@ -32,9 +32,10 @@ object BundleIdGenerator {
             NotificationType.ADD_COMMENT, NotificationType.REPLY_COMMENT ->
                 buildBundleIdWithSender(receiverId, senderId, type, notification.mediaReferenceId)
 
+            // SHOULD THIS BE JUST CHANGED DETAILS?
             NotificationType.CREATE_TRIP, NotificationType.DELETE_TRIP,
             NotificationType.CHANGE_TRIP_TITLE, NotificationType.CHANGE_TRIP_DESCRIPTION,
-            NotificationType.CHANGE_TRIP_COVER_PHOTO,
+            NotificationType.CHANGE_TRIP_COVER_PHOTO, NotificationType.CHANGE_TRIP_VISIBILITY,
             NotificationType.ADD_COLLABORATOR, NotificationType.ADD_VIEWER,
             NotificationType.REMOVE_COLLABORATOR, NotificationType.REMOVE_VIEWER ->
                 buildBundleIdWithSender(receiverId, senderId, type, notification.collectionReferenceId)

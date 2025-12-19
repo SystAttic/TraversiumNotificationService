@@ -37,9 +37,11 @@ data class SeenNotificationBundle(
     @Column(name = "node_reference_id", nullable = true)
     val nodeReferenceId: Long? = null,
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "media_reference_ids", nullable = true)
-    val mediaReferenceIds: List<Long>? = null,
+    @Column(name = "media_reference_id", nullable = true)
+    val mediaReferenceId: Long? = null,
+
+    @Column(name = "media_count", nullable = true)
+    val mediaCount: Int? = null,
 
     @Column(name = "comment_reference_id", nullable = true)
     val commentReferenceId: Long? = null,

@@ -50,6 +50,7 @@ class KafkaConsumerTests(
             collectionReferenceId = 123L,
             nodeReferenceId = null,
             mediaReferenceId = null,
+            mediaCount = null,
             commentReferenceId = null,
             action = ActionType.CREATE
         )

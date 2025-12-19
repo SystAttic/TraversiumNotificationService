@@ -32,11 +32,12 @@ object NotificationMapper {
             type = this.action,
             collectionReferenceId = this.collectionReferenceId,
             nodeReferenceId = this.nodeReferenceId,
-            mediaReferenceIds = this.mediaReferenceIds,
+            mediaReferenceIds = this.mediaReferenceId,
             commentReferenceId = this.commentReferenceId,
             notificationCount = this.notificationCount,
             firstTimestamp = this.firstTimestamp,
-            lastTimestamp = this.lastTimestamp
+            lastTimestamp = this.lastTimestamp,
+            mediaCount = this.mediaCount
         )
     }
 

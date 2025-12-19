@@ -142,6 +142,7 @@ class NotificationService(
 
         bundleGroups.forEach { (bundleId, notifications) ->
             val firstNotification = notifications.first()
+            val distinctMediaIds = notifications.mapNotNull { it.mediaReferenceId }.distinct()
             val bundle = SeenNotificationBundle(
                 bundleId = bundleId,
                 receiverId = firstNotification.receiverId!!,
@@ -149,7 +150,8 @@ class NotificationService(
                 action = firstNotification.action!!,
                 collectionReferenceId = firstNotification.collectionReferenceId,
                 nodeReferenceId = firstNotification.nodeReferenceId,
-                mediaReferenceIds = notifications.mapNotNull { it.mediaReferenceId }.distinct(),
+                mediaReferenceId = firstNotification.mediaReferenceId,
+                mediaCount = if (distinctMediaIds.isNotEmpty()) distinctMediaIds.size else null,
                 commentReferenceId = firstNotification.commentReferenceId,
                 notificationCount = notifications.size,
                 firstTimestamp = notifications.minOf { it.timestamp!! },
@@ -164,13 +166,15 @@ class NotificationService(
 
     private fun convertUnseenGroupToDto(bundleId: String, notifications: List<UnseenNotification>): NotificationBundleDto {
         val firstNotification = notifications.first()
+        val distinctMediaIds = notifications.mapNotNull { it.mediaReferenceId }.distinct()
         return NotificationBundleDto(
             bundleId = bundleId,
             senderIds = notifications.map { it.senderId!! }.distinct(),
             type = firstNotification.action!!,
             collectionReferenceId = firstNotification.collectionReferenceId,
             nodeReferenceId = firstNotification.nodeReferenceId,
-            mediaReferenceIds = notifications.mapNotNull { it.mediaReferenceId }.distinct(),
+            mediaReferenceIds = firstNotification.mediaReferenceId,
+            mediaCount = if (distinctMediaIds.isNotEmpty()) distinctMediaIds.size else null,
             commentReferenceId = firstNotification.commentReferenceId,
             notificationCount = notifications.size,
             firstTimestamp = notifications.minOf { it.timestamp!! },
@@ -245,6 +249,7 @@ class NotificationService(
                 ActionType.CHANGE_TITLE -> NotificationType.CHANGE_TRIP_TITLE
                 ActionType.CHANGE_COVER_PHOTO -> NotificationType.CHANGE_TRIP_COVER_PHOTO
                 ActionType.CHANGE_DESCRIPTION -> NotificationType.CHANGE_TRIP_DESCRIPTION
+                ActionType.CHANGE_VISIBILITY -> NotificationType.CHANGE_TRIP_VISIBILITY
                 else -> throw IllegalArgumentException("Unknown action: $action")
             }
             else -> when (action) {
