@@ -10,6 +10,7 @@ import traversium.commonmultitenancy.TenantContext
 import traversium.commonmultitenancy.TenantUtils
 import traversium.notification.db.repository.UnseenNotificationRepository
 import traversium.notification.dto.BundleIdDto
+import traversium.notification.mapper.NotificationType
 import traversium.notification.util.BundleIdGenerator
 
 /**
@@ -61,9 +62,11 @@ class NotificationBundlingService(
             return
         }
 
-        val bundleGroups = unseenNotifications.groupBy { notification ->
-            BundleIdGenerator.generateBundleId(notification)
-        }
+        val bundleGroups = unseenNotifications
+            .filter { it.action != NotificationType.HEALTHCHECK }
+            .groupBy { notification ->
+                BundleIdGenerator.generateBundleId(notification)
+            }
 
         bundleGroups.keys.forEach { bundleId ->
             if (!emittedBundleIds.contains(bundleId)) {
