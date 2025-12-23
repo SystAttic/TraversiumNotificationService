@@ -30,6 +30,7 @@ class FirebaseFilterConfiguration {
                     .requestMatchers("/actuator/health").permitAll()
                     .requestMatchers("/actuator/prometheus/**").permitAll()
                     .requestMatchers("/actuator/prometheus").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers(
                         "/swagger-ui/**",
                         "/v3/api-docs/**",

@@ -2,6 +2,7 @@ package traversium.notification.service
 
 import jakarta.persistence.EntityManager
 import org.apache.logging.log4j.kotlin.Logging
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +18,7 @@ import traversium.notification.util.BundleIdGenerator
  * @author Maja Razinger
  */
 @Service
+@RefreshScope
 class NotificationBundlingService(
     private val unseenNotificationRepository: UnseenNotificationRepository,
     private val bundleIdSink: Sinks.Many<BundleIdDto>,

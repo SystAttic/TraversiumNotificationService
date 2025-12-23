@@ -10,6 +10,7 @@ import org.apache.kafka.common.errors.RecordDeserializationException
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.ConsumerFactory
@@ -26,6 +27,7 @@ import kotlin.reflect.KClass
  * @author Maja Razinger
  */
 @Configuration
+@RefreshScope
 @ConditionalOnProperty(prefix = "spring.kafka", name = ["bootstrap-servers"])
 class KafkaConfiguration(val kafkaProperties: KafkaProperties) {
 
