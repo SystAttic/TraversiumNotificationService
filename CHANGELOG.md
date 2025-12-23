@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - Unreleased
 ### Added
 - Support for config server
+- Add documentation for Notification Service
 
 ## [1.3.0] - 2025-12-19
 ### Added
