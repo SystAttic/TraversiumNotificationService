@@ -30,7 +30,7 @@ import kotlin.test.Test
 @ExtendWith(SpringExtension::class)
 @EmbeddedKafka(partitions = 1, topics = ["test-notification-topic"], bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 @ActiveProfiles("test")
-@ContextConfiguration(classes = [TestMultitenancyConfig::class, MockFirebaseConfig::class])
+@ContextConfiguration(classes = [TestMultitenancyConfig::class, MockFirebaseConfig::class, TestKafkaConfig::class])
 class KafkaConsumerTests(
 ) {
 

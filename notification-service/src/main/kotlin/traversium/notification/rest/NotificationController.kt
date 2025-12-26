@@ -14,6 +14,7 @@ import reactor.core.publisher.Flux
 import traversium.notification.dto.BundleIdDto
 import traversium.notification.dto.NotificationBundleDto
 import traversium.notification.dto.NotificationBundleListDto
+import traversium.notification.exceptions.ExceptionHandler.ErrorResponse
 import traversium.notification.service.NotificationService
 
 /**
@@ -42,7 +43,19 @@ class NotificationController(
             ),
             ApiResponse(
                 responseCode = "401",
-                description = "Unauthorized - Authentication is required and has failed or has not yet been provided."
+                description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error - An unexpected error occurred.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
             )
         ]
     )
@@ -66,10 +79,21 @@ class NotificationController(
             ),
             ApiResponse(
                 responseCode = "401",
-                description = "Unauthorized - Authentication is required and has failed or has not yet been provided."
+                description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error - An unexpected error occurred.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
             )
         ]
-
     )
     fun getUnseenNotificationsCountForUser(): Long =
         notificationService.getUnseenNotificationsCount()
@@ -90,8 +114,28 @@ class NotificationController(
                 )]
             ),
             ApiResponse(
+                responseCode = "400",
+                description = "Bad Request - Invalid parameter values provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
                 responseCode = "401",
-                description = "Unauthorized - Authentication is required and has failed or has not yet been provided."
+                description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error - An unexpected error occurred.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
             )
         ]
     )
@@ -117,8 +161,28 @@ class NotificationController(
                 )]
             ),
             ApiResponse(
+                responseCode = "400",
+                description = "Bad Request - Invalid parameter values provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
                 responseCode = "401",
-                description = "Unauthorized - Authentication is required and has failed or has not yet been provided."
+                description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error - An unexpected error occurred.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
             )
         ]
     )
@@ -144,8 +208,28 @@ class NotificationController(
                 )]
             ),
             ApiResponse(
+                responseCode = "400",
+                description = "Bad Request - Invalid parameter values provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
                 responseCode = "401",
-                description = "Unauthorized - Authentication is required and has failed or has not yet been provided."
+                description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Server Error - An unexpected error occurred.",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
             )
         ]
     )
