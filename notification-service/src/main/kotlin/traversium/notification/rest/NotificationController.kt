@@ -2,6 +2,7 @@ package traversium.notification.rest
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.MediaType
@@ -46,7 +47,10 @@ class NotificationController(
                 description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":401,"error":"Authentication failed","message":"Firebase authentication failed"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -54,7 +58,10 @@ class NotificationController(
                 description = "Internal Server Error - An unexpected error occurred.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":500,"error":"Internal server error","message":"An unexpected error occurred"}"""
+                    )]
                 )]
             )
         ]
@@ -82,7 +89,10 @@ class NotificationController(
                 description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":401,"error":"Authentication failed","message":"Firebase authentication failed"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -90,7 +100,10 @@ class NotificationController(
                 description = "Internal Server Error - An unexpected error occurred.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":500,"error":"Internal server error","message":"An unexpected error occurred"}"""
+                    )]
                 )]
             )
         ]
@@ -118,7 +131,10 @@ class NotificationController(
                 description = "Bad Request - Invalid parameter values provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":400,"error":"Invalid parameter type","message":"Invalid value '-5' for parameter 'offset'. Expected type: Int"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -126,7 +142,10 @@ class NotificationController(
                 description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":401,"error":"Authentication failed","message":"Firebase authentication failed"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -134,7 +153,10 @@ class NotificationController(
                 description = "Internal Server Error - An unexpected error occurred.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":500,"error":"Internal server error","message":"An unexpected error occurred"}"""
+                    )]
                 )]
             )
         ]
@@ -165,7 +187,10 @@ class NotificationController(
                 description = "Bad Request - Invalid parameter values provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":400,"error":"Invalid parameter type","message":"Invalid value '-5' for parameter 'offset'. Expected type: Int"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -173,7 +198,10 @@ class NotificationController(
                 description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":401,"error":"Authentication failed","message":"Firebase authentication failed"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -181,7 +209,10 @@ class NotificationController(
                 description = "Internal Server Error - An unexpected error occurred.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":500,"error":"Internal server error","message":"An unexpected error occurred"}"""
+                    )]
                 )]
             )
         ]
@@ -212,7 +243,10 @@ class NotificationController(
                 description = "Bad Request - Invalid parameter values provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":400,"error":"Invalid parameter type","message":"Invalid value '-5' for parameter 'offset'. Expected type: Int"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -220,7 +254,10 @@ class NotificationController(
                 description = "Unauthorized - Authentication is required and has failed or has not yet been provided.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":401,"error":"Authentication failed","message":"Firebase authentication failed"}"""
+                    )]
                 )]
             ),
             ApiResponse(
@@ -228,7 +265,10 @@ class NotificationController(
                 description = "Internal Server Error - An unexpected error occurred.",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
+                    schema = Schema(implementation = ErrorResponse::class),
+                    examples = [ExampleObject(
+                        value = """{"timestamp":"2024-01-01T12:00:00","status":500,"error":"Internal server error","message":"An unexpected error occurred"}"""
+                    )]
                 )]
             )
         ]
